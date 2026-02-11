@@ -13,7 +13,7 @@ import java.util.Random;
 
 public class IndeedService extends ScrapeService implements ScrapeInterface {
     public List<Vaga> buscarVagas() {
-        System.out.println("BUSCANDO EM: INDEED");
+        this.iniciarDriver();
         List<Vaga> vagas = new ArrayList<>();
 
         try {
@@ -122,6 +122,8 @@ public class IndeedService extends ScrapeService implements ScrapeInterface {
 
         } catch (Exception e) {
             System.err.println("Erro geral Indeed: " + e.getMessage());
+        } finally {
+            this.fechar();
         }
         return vagas;
     }

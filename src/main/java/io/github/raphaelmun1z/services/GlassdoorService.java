@@ -3,14 +3,18 @@ package io.github.raphaelmun1z.services;
 import io.github.raphaelmun1z.entities.Vaga;
 import io.github.raphaelmun1z.services.interfaces.ScrapeInterface;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class GlassdoorService extends ScrapeService implements ScrapeInterface {
     public List<Vaga> buscarVagas() {
+        this.iniciarDriver();
         List<Vaga> vagas = new ArrayList<>();
         try {
             String url = "https://www.glassdoor.com.br/Vaga/trabalho-remoto-brasil-ti-vagas-SRCH_IL.0,22_IS12226_KO23,25.htm";
@@ -22,36 +26,33 @@ public class GlassdoorService extends ScrapeService implements ScrapeInterface {
             List<WebElement> elementosVagas = driver.findElements(By.cssSelector(seletorLista + " > li[data-test='jobListing']"));
 
             for (WebElement card : elementosVagas) {
-                destacarElemento(card);
-
-                Vaga novaVaga = new Vaga();
-                novaVaga.setFonte("Glassdoor");
-                boolean dadosValidos = false;
-
                 try {
-                    // --- TÍTULO E LINK ---
-                    WebElement linkTitulo = card.findElement(By.cssSelector("a[data-test='job-title']"));
-                    String textoTitulo = linkTitulo.getText();
-                    String linkVaga = linkTitulo.getAttribute("href");
+                    destacarElemento(card);
 
-                    if (!textoTitulo.isEmpty()) {
-                        novaVaga.setTitulo(textoTitulo);
-                        novaVaga.setLinkCandidatura(linkVaga);
-                        dadosValidos = true;
-                    }
+                    Vaga novaVaga = new Vaga();
+                    novaVaga.setFonte("Glassdoor");
+                    boolean dadosValidos = false;
+
+                    // --- TÍTULO E LINK ---
+                    try {
+                        WebElement linkTitulo = card.findElement(By.cssSelector("a[data-test='job-title']"));
+                        String textoTitulo = linkTitulo.getText();
+                        String linkVaga = linkTitulo.getAttribute("href");
+
+                        if (!textoTitulo.isEmpty()) {
+                            novaVaga.setTitulo(textoTitulo);
+                            novaVaga.setLinkCandidatura(linkVaga);
+                            dadosValidos = true;
+                        }
+                    } catch (Exception e) {}
 
                     // --- CÓDIGO DA VAGA ---
                     try {
-                        String codigoHtml = card.getAttribute("data-jobid");
-
-                        if (codigoHtml != null && !codigoHtml.isEmpty()) {
-                            novaVaga.setCodigoVaga(codigoHtml);
+                        String idVaga = card.getAttribute("data-jobid");
+                        if (idVaga != null) {
+                            novaVaga.setCodigoVaga(idVaga);
                         } else {
-                            String[] partesUrl = linkVaga.split("jl=");
-                            if (partesUrl.length > 1) {
-                                String codigoExtraido = partesUrl[1].split("&")[0]; // Pega o numero antes do proximo &
-                                novaVaga.setCodigoVaga(codigoExtraido);
-                            }
+                            novaVaga.setCodigoVaga("N/A");
                         }
                     } catch (Exception e) {
                         novaVaga.setCodigoVaga("N/A");
@@ -60,8 +61,7 @@ public class GlassdoorService extends ScrapeService implements ScrapeInterface {
                     // --- EMPRESA ---
                     try {
                         WebElement empresaEl = card.findElement(By.cssSelector("span[class*='EmployerProfile_compactEmployerName']"));
-                        String nomeEmpresa = empresaEl.getText();
-                        novaVaga.setEmpresa(nomeEmpresa);
+                        novaVaga.setEmpresa(empresaEl.getText());
                     } catch (Exception e) {
                         novaVaga.setEmpresa("N/A");
                     }
@@ -69,7 +69,7 @@ public class GlassdoorService extends ScrapeService implements ScrapeInterface {
                     // --- SALÁRIO ---
                     try {
                         WebElement salarioEl = card.findElement(By.cssSelector("[data-test='detailSalary']"));
-                        novaVaga.setSalario(salarioEl.getText().replaceAll("\\(.*?\\)", "").trim()); // Remove texto extra entre parenteses
+                        novaVaga.setSalario(salarioEl.getText().replaceAll("\\(.*?\\)", "").trim());
                     } catch (Exception e) {
                         novaVaga.setSalario("N/A");
                     }
@@ -93,29 +93,24 @@ public class GlassdoorService extends ScrapeService implements ScrapeInterface {
                         novaVaga.setModalidade("N/A");
                     }
 
-                    // --- REGIME ---
+                    // --- REGIME E DESCRIÇÃO ---
                     try {
                         WebElement descEl = card.findElement(By.cssSelector("[data-test='descSnippet']"));
-                        String descText = descEl.getText().toLowerCase();
+                        String descText = descEl.getText();
+                        String descLower = descText.toLowerCase();
 
-                        if (descText.contains("clt") || descText.contains("efetivo")) {
+                        if (descLower.contains("clt") || descLower.contains("efetivo")) {
                             novaVaga.setRegime("CLT");
-                        } else if (descText.contains("pj") || descText.contains("jurídica")) {
+                        } else if (descLower.contains("pj") || descLower.contains("jurídica")) {
                             novaVaga.setRegime("PJ");
-                        } else if (descText.contains("estágio") || descText.contains("intern")) {
+                        } else if (descLower.contains("estágio") || descLower.contains("intern")) {
                             novaVaga.setRegime("Estágio");
                         } else {
                             novaVaga.setRegime("N/A");
                         }
+                        novaVaga.setDescricao(descText);
                     } catch (Exception e) {
                         novaVaga.setRegime("N/A");
-                    }
-
-                    // --- DESCRIÇÃO ---
-                    try {
-                        WebElement descEl = card.findElement(By.cssSelector("[data-test='descSnippet']"));
-                        novaVaga.setDescricao(descEl.getText());
-                    } catch (Exception e) {
                         novaVaga.setDescricao("N/A");
                     }
 
@@ -124,8 +119,11 @@ public class GlassdoorService extends ScrapeService implements ScrapeInterface {
                     }
                 } catch (Exception e) {}
             }
+
         } catch (Exception e) {
             System.err.println("Erro ao buscar vagas: " + e.getMessage());
+        } finally {
+            this.fechar();
         }
         return vagas;
     }

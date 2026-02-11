@@ -12,6 +12,7 @@ import java.util.List;
 public class InfojobsService extends ScrapeService implements ScrapeInterface {
 
     public List<Vaga> buscarVagas() {
+        this.iniciarDriver();
         List<Vaga> vagas = new ArrayList<>();
         try {
             String url = "https://www.infojobs.com.br/vagas-de-emprego-estagio+ti-em-sao-paulo,-sp-trabalho-home-office.aspx";
@@ -121,6 +122,8 @@ public class InfojobsService extends ScrapeService implements ScrapeInterface {
             }
         } catch (Exception e) {
             System.err.println("Erro ao buscar vagas: " + e.getMessage());
+        } finally {
+            this.fechar();
         }
         return vagas;
     }

@@ -13,6 +13,7 @@ import java.util.Objects;
 public class CathoService extends ScrapeService implements ScrapeInterface {
 
     public List<Vaga> buscarVagas() {
+        this.iniciarDriver();
         List<Vaga> vagas = new ArrayList<>();
         try {
             String url = "https://www.catho.com.br/vagas/jr/?order=score&area_id%5B0%5D=51&work_model%5B0%5D=remote";
@@ -107,6 +108,8 @@ public class CathoService extends ScrapeService implements ScrapeInterface {
             }
         } catch (Exception e) {
             System.err.println("Erro ao buscar vagas: " + e.getMessage());
+        } finally {
+            this.fechar();
         }
         return vagas;
     }

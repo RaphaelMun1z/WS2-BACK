@@ -12,6 +12,7 @@ import java.util.List;
 public class NerdinService extends ScrapeService implements ScrapeInterface {
 
     public List<Vaga> buscarVagas() {
+        this.iniciarDriver();
         List<Vaga> vagas = new ArrayList<>();
         try {
             String url = "https://www.nerdin.com.br/vagas.php?CodigoNivel=4,3,7,6&filtro_home_office=1";
@@ -116,6 +117,8 @@ public class NerdinService extends ScrapeService implements ScrapeInterface {
             }
         } catch (Exception e) {
             System.err.println("Erro ao buscar vagas: " + e.getMessage());
+        } finally {
+            this.fechar();
         }
         return vagas;
     }
