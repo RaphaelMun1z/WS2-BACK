@@ -1,4 +1,4 @@
-package io.github.raphaelmun1z.services;
+package io.github.raphaelmun1z.services.scrape;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;

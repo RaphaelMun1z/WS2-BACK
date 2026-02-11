@@ -1,42 +1,42 @@
-package io.github.raphaelmun1z.services;
+package io.github.raphaelmun1z.services.scrape;
 
 import io.github.raphaelmun1z.entities.Vaga;
-import io.github.raphaelmun1z.services.interfaces.ScrapeInterface;
+import io.github.raphaelmun1z.services.scrape.interfaces.ScrapeInterface;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class NerdinService extends ScrapeService implements ScrapeInterface {
+public class CathoService extends io.github.raphaelmun1z.services.scrape.ScrapeService implements ScrapeInterface {
 
     public List<Vaga> buscarVagas() {
         this.iniciarDriver();
         List<Vaga> vagas = new ArrayList<>();
         try {
-            String url = "https://www.nerdin.com.br/vagas.php?CodigoNivel=4,3,7,6&filtro_home_office=1";
+            String url = "https://www.catho.com.br/vagas/jr/?order=score&area_id%5B0%5D=51&work_model%5B0%5D=remote";
             driver.get(url);
 
-            String seletorLista = "div#vagas-container";
+            String seletorLista = "ul.search-result-custom_jobList__lVIvI";
             wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(seletorLista)));
 
-            List<WebElement> elementosVagas = driver.findElements(By.cssSelector(seletorLista + " > div.vaga-card"));
+            List<WebElement> elementosVagas = driver.findElements(By.cssSelector(seletorLista + " > li"));
 
             for (WebElement card : elementosVagas) {
                 destacarElemento(card);
 
                 Vaga novaVaga = new Vaga();
-                novaVaga.setFonte("Nerdin");
+                novaVaga.setFonte("Catho");
                 boolean dadosValidos = false;
 
                 try {
                     // --- TÍTULO E LINK ---
-                    WebElement linkTitulo = card.findElement(By.cssSelector("h3.vaga-titulo"));
-                    String textoTitulo = linkTitulo.getText();
+                    WebElement linkTitulo = card.findElement(By.cssSelector("h2 a"));
 
-                    WebElement botaoAcessarVaga = card.findElement(By.cssSelector("a.btn-sm"));
-                    String linkVaga = botaoAcessarVaga.getAttribute("href");
+                    String textoTitulo = linkTitulo.getText();
+                    String linkVaga = linkTitulo.getAttribute("href");
 
                     if (!textoTitulo.isEmpty()) {
                         novaVaga.setTitulo(textoTitulo);
@@ -48,10 +48,8 @@ public class NerdinService extends ScrapeService implements ScrapeInterface {
                     try {
                         String[] partesUrl = linkVaga.split("/");
                         String codigoExtraido = partesUrl[partesUrl.length - 1];
-                        String codigoLimpo = codigoExtraido.replaceAll("\\D", "");
-
-                        if (codigoLimpo.matches("\\d+")) {
-                            novaVaga.setCodigoVaga(codigoLimpo);
+                        if (codigoExtraido.matches("\\d+")) {
+                            novaVaga.setCodigoVaga(codigoExtraido);
                         }
                     } catch (Exception e) {
                         novaVaga.setCodigoVaga("N/A");
@@ -59,16 +57,19 @@ public class NerdinService extends ScrapeService implements ScrapeInterface {
 
                     // --- EMPRESA ---
                     try {
-                        WebElement empresaEl = card.findElement(By.cssSelector(".vaga-empresa"));
-                        String nomeEmpresa = empresaEl.getText();
-                        novaVaga.setEmpresa(nomeEmpresa);
+                        WebElement empresaEl = card.findElement(By.xpath(".//h2/ancestor::div[1]/following-sibling::p"));
+                        String textoBruto = empresaEl.getText();
+                        String empresaLimpa = textoBruto.replace("Por que?", "")
+                                .replace("Por que", "") // Prevenção extra
+                                .trim();
+                        novaVaga.setEmpresa(empresaLimpa);
                     } catch (Exception e) {
                         novaVaga.setEmpresa("N/A");
                     }
 
                     // --- SALÁRIO ---
                     try {
-                        WebElement salarioEl = card.findElement(By.cssSelector("div.vaga-salario"));
+                        WebElement salarioEl = card.findElement(By.cssSelector("div[class*='salaryText']"));
                         novaVaga.setSalario(salarioEl.getText());
                     } catch (Exception e) {
                         novaVaga.setSalario("N/A");
@@ -76,11 +77,9 @@ public class NerdinService extends ScrapeService implements ScrapeInterface {
 
                     // --- LOCAL e MODALIDADE ---
                     try {
-                        String local = card.findElement(By.cssSelector("div.vaga-local")).getText();
-                        novaVaga.setLocal(local);
-
-                        String localLower = local.toLowerCase();
-                        if (localLower.contains("home office")) {
+                        WebElement localEl = card.findElement(By.cssSelector("button a[title]"));
+                        novaVaga.setLocal(localEl.getAttribute("title"));
+                        if(Objects.equals(novaVaga.getLocal(), "Home Office/HO")){
                             novaVaga.setModalidade("Home Office");
                         } else {
                             novaVaga.setModalidade("N/A");
@@ -89,26 +88,18 @@ public class NerdinService extends ScrapeService implements ScrapeInterface {
                         novaVaga.setLocal("N/A");
                     }
 
-                    // --- REGIME ---
-                    try {
-                        boolean ehPJ = !card.findElements(By.cssSelector("i.fa-briefcase")).isEmpty();
-                        boolean ehCLT = !card.findElements(By.cssSelector("i.fa-file-contract")).isEmpty();
-
-                        if (ehPJ && ehCLT) {
-                            novaVaga.setRegime("CLT e PJ");
-                        } else if (ehPJ) {
-                            novaVaga.setRegime("PJ");
-                        } else if (ehCLT) {
-                            novaVaga.setRegime("CLT");
-                        } else {
-                            novaVaga.setRegime("N/A");
-                        }
-                    } catch (Exception e) {
-                        novaVaga.setRegime("N/A");
-                    }
-
                     // --- DESCRIÇÃO ---
-                    novaVaga.setDescricao("N/A");
+                    try {
+                        WebElement descEl = card.findElement(By.cssSelector(".job-description"));
+                        String descricao = descEl.getAttribute("textContent");
+
+                        if (descricao.length() > 200) {
+                            descricao = descricao.substring(0, 200) + "...";
+                        }
+                        novaVaga.setDescricao(descricao);
+                    } catch (Exception e) {
+                        novaVaga.setDescricao("N/A");
+                    }
 
                     if (dadosValidos) {
                         vagas.add(novaVaga);
@@ -124,7 +115,7 @@ public class NerdinService extends ScrapeService implements ScrapeInterface {
     }
 
     public void imprimirVagas(){
-        System.out.println("BUSCANDO EM: NERDIN");
+        System.out.println("BUSCANDO EM: CATHO");
         this.iniciarDriver();
         List<Vaga> vagas = this.buscarVagas();
         System.out.println("Encontrei " + vagas.size() + " vagas:");

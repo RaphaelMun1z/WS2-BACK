@@ -1,7 +1,7 @@
-package io.github.raphaelmun1z.services;
+package io.github.raphaelmun1z.services.scrape;
 
 import io.github.raphaelmun1z.entities.Vaga;
-import io.github.raphaelmun1z.services.interfaces.ScrapeInterface;
+import io.github.raphaelmun1z.services.scrape.interfaces.ScrapeInterface;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;

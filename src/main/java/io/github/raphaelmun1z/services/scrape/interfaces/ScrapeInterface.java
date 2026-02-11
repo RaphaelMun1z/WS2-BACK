@@ -1,4 +1,4 @@
-package io.github.raphaelmun1z.services.interfaces;
+package io.github.raphaelmun1z.services.scrape.interfaces;
 
 import io.github.raphaelmun1z.entities.Vaga;
 

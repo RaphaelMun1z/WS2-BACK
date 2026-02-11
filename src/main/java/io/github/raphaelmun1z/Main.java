@@ -1,34 +1,14 @@
 package io.github.raphaelmun1z;
 
-import io.github.raphaelmun1z.entities.Vaga;
-import io.github.raphaelmun1z.services.*;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+@SpringBootApplication
+@EnableScheduling
 public class Main {
 
     public static void main(String[] args) {
-        CathoService cathoScraper = new CathoService();
-        NerdinService nerdinScraper = new NerdinService();
-        InfojobsService infojobsScraper = new InfojobsService();
-        IndeedService indeedScraper = new IndeedService();
-        GlassdoorService glassdoorScraper = new GlassdoorService();
-
-        try {
-            System.out.println("Iniciando buscas...");
-            Set<Vaga> todasAsVagas = new HashSet<>();
-            todasAsVagas.addAll(cathoScraper.buscarVagas());
-            todasAsVagas.addAll(nerdinScraper.buscarVagas());
-            todasAsVagas.addAll(infojobsScraper.buscarVagas());
-            todasAsVagas.addAll(indeedScraper.buscarVagas());
-            todasAsVagas.addAll(glassdoorScraper.buscarVagas());
-            todasAsVagas.forEach(System.out::println);
-            System.out.println("Total: " + todasAsVagas.size());
-        } finally {
-            System.out.println("Buscas finalizadas...");
-        }
+        SpringApplication.run(Main.class, args);
     }
 }

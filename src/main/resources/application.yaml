@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: WS2
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bd_ws2
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+api:
+  security:
+    token:
+      secret: i9a(Pj7@39&
+
+cors:
+  originPatterns: http://localhost:8080,http://localhost:8889,http://localhost:80,http://localhost:4200

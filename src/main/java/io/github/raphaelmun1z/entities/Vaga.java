@@ -1,23 +1,40 @@
 package io.github.raphaelmun1z.entities;
 
+import jakarta.persistence.*;
+
+import java.util.Objects;
+
+@Entity
+@Table(name = "tb_vaga", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"fonte", "codigoVaga"})
+})
 public class Vaga {
-    private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
+
     private String codigoVaga;
     private String titulo;
     private String empresa;
     private String salario;
     private String dataAnuncio;
     private String local;
+
+    @Column(columnDefinition = "TEXT")
     private String descricao;
+
     private String regime;
+
+    @Column(columnDefinition = "TEXT")
     private String linkCandidatura;
+
     private String modalidade;
     private String fonte;
 
     public Vaga() {
     }
 
-    public Vaga(Integer id, String codigoVaga, String titulo, String empresa, String salario, String dataAnuncio, String local, String descricao, String regime, String linkCandidatura, String modalidade, String fonte) {
+    public Vaga(String id, String codigoVaga, String titulo, String empresa, String salario, String dataAnuncio, String local, String descricao, String regime, String linkCandidatura, String modalidade, String fonte) {
         this.id = id;
         this.codigoVaga = codigoVaga;
         this.titulo = titulo;
@@ -32,11 +49,11 @@ public class Vaga {
         this.fonte = fonte;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -126,6 +143,18 @@ public class Vaga {
 
     public void setFonte(String fonte) {
         this.fonte = fonte;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Vaga vaga = (Vaga) o;
+        return Objects.equals(codigoVaga, vaga.codigoVaga) && Objects.equals(fonte, vaga.fonte);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(codigoVaga, fonte);
     }
 
     @Override
