@@ -130,19 +130,31 @@ public class Vaga {
 
     @Override
     public String toString() {
-        return "Vaga{" +
-                "id=" + id +
-                ", codigoVaga='" + codigoVaga + '\'' +
-                ", titulo='" + titulo + '\'' +
-                ", empresa='" + empresa + '\'' +
-                ", salario='" + salario + '\'' +
-                ", dataAnuncio='" + dataAnuncio + '\'' +
-                ", local='" + local + '\'' +
-                ", descricao='" + descricao + '\'' +
-                ", regime='" + regime + '\'' +
-                ", linkCandidatura='" + linkCandidatura + '\'' +
-                ", modalidade='" + modalidade + '\'' +
-                ", fonte='" + fonte + '\'' +
-                '}';
+        return """
+            {
+                "id": %s,
+                "fonte": "%s",
+                "codigo": "%s",
+                "titulo": "%s",
+                "empresa": "%s",
+                "salario": "%s",
+                "local": "%s",
+                "modalidade": "%s",
+                "regime": "%s",
+                "link": "%s",
+                "descricao": "%s"
+            }""".formatted(
+                id,
+                fonte,
+                codigoVaga,
+                titulo,
+                empresa,
+                salario,
+                local,
+                modalidade,
+                regime,
+                linkCandidatura,
+                descricao != null ? descricao.replace("\"", "'").replace("\n", " ") : ""
+        );
     }
 }

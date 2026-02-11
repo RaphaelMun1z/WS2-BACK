@@ -1,21 +1,30 @@
 package io.github.raphaelmun1z;
 
-import io.github.raphaelmun1z.entities.Vaga;
-import io.github.raphaelmun1z.services.ScrapeService;
-
-import java.util.List;
+import io.github.raphaelmun1z.services.*;
 
 public class Main {
+
     public static void main(String[] args) {
-        ScrapeService scraper = new ScrapeService();
+        CathoService cathoScraper = new CathoService();
+        NerdinService nerdinScraper = new NerdinService();
+        InfojobsService infojobsScraper = new InfojobsService();
+        IndeedService indeedScraper = new IndeedService();
+        GlassdoorService glassdoorScraper = new GlassdoorService();
 
         try {
-            System.out.println("Iniciando busca...");
-            List<Vaga> vagasCatho = scraper.buscarVagasCatho();
-            System.out.println("Encontrei " + vagasCatho.size() + " vagas:");
-            vagasCatho.forEach(System.out::println);
+            System.out.println("Iniciando buscas...");
+            //cathoScraper.imprimirVagas();
+            //nerdinScraper.imprimirVagas();
+            //infojobsScraper.imprimirVagas();
+            //indeedScraper.imprimirVagas();
+            glassdoorScraper.imprimirVagas();
         } finally {
-            scraper.fechar();
+            System.out.println("Fechando navegadores...");
+            cathoScraper.fechar();
+            nerdinScraper.fechar();
+            infojobsScraper.fechar();
+            indeedScraper.fechar();
+            glassdoorScraper.fechar();
         }
     }
 }
