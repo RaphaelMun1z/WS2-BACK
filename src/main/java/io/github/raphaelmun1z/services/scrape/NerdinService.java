@@ -82,8 +82,10 @@ public class NerdinService extends io.github.raphaelmun1z.services.scrape.Scrape
                         String localLower = local.toLowerCase();
                         if (localLower.contains("home office")) {
                             novaVaga.setModalidade("Home Office");
+                        } else if (localLower.contains("híbrido")) {
+                            novaVaga.setModalidade("Híbrido");
                         } else {
-                            novaVaga.setModalidade("N/A");
+                            novaVaga.setModalidade("Presencial");
                         }
                     } catch (Exception e) {
                         novaVaga.setLocal("N/A");

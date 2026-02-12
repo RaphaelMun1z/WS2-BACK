@@ -81,8 +81,10 @@ public class CathoService extends io.github.raphaelmun1z.services.scrape.ScrapeS
                         novaVaga.setLocal(localEl.getAttribute("title"));
                         if(Objects.equals(novaVaga.getLocal(), "Home Office/HO")){
                             novaVaga.setModalidade("Home Office");
+                        } else if (novaVaga.getLocal().contains("híbrido") || novaVaga.getLocal().contains("hybrid")) {
+                            novaVaga.setModalidade("Híbrido");
                         } else {
-                            novaVaga.setModalidade("N/A");
+                            novaVaga.setModalidade("Presencial");
                         }
                     } catch (Exception e) {
                         novaVaga.setLocal("N/A");

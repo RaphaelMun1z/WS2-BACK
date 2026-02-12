@@ -7,6 +7,8 @@ import io.github.raphaelmun1z.repositories.VagaRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,10 +40,9 @@ public class VagaService {
         dtos.forEach(this::salvar);
     }
 
-    public List<VagaResponseDTO> listarTodas() {
-        return repository.findAll().stream()
-                .map(VagaResponseDTO::new)
-                .collect(Collectors.toList());
+    public Page<VagaResponseDTO> listarTodas(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(VagaResponseDTO::new);
     }
 
     public VagaResponseDTO buscarPorId(String id) {
@@ -50,7 +51,7 @@ public class VagaService {
                 .orElseThrow(() -> new RuntimeException("Vaga não encontrada com o ID: " + id));
     }
 
-    public List<VagaResponseDTO> listarComFiltros(VagaRequestDTO filtros) {
+    public Page<VagaResponseDTO> listarComFiltros(VagaRequestDTO filtros, Pageable pageable) {
         Vaga vagaFiltro = new Vaga();
         BeanUtils.copyProperties(filtros, vagaFiltro);
 
@@ -60,8 +61,7 @@ public class VagaService {
 
         Example<Vaga> exemplo = Example.of(vagaFiltro, matcher);
 
-        return repository.findAll(exemplo).stream()
-                .map(VagaResponseDTO::new)
-                .collect(Collectors.toList());
+        return repository.findAll(exemplo, pageable)
+                .map(VagaResponseDTO::new);
     }
 }

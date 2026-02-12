@@ -9,9 +9,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 @Component
 public class ScrapingJob {
@@ -21,7 +18,7 @@ public class ScrapingJob {
         this.vagaService = vagaService;
     }
 
-    @Scheduled(cron = "0 26 1 * * *")
+    @Scheduled(cron = "0 03 22 * * *")
     public void executarBuscaAutomatica() {
         System.out.println("Iniciando scraping...");
 

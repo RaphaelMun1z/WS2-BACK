@@ -4,7 +4,9 @@ import io.github.raphaelmun1z.dto.req.VagaRequestDTO;
 import io.github.raphaelmun1z.dto.res.VagaResponseDTO;
 import io.github.raphaelmun1z.services.system.VagaService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,9 +35,11 @@ public class VagaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<VagaResponseDTO>> buscarTodas() {
-        List<VagaResponseDTO> lista = service.listarTodas();
-        return ResponseEntity.ok(lista);
+    public ResponseEntity<Page<VagaResponseDTO>> buscarTodas(
+            @PageableDefault(size = 12, sort = "id") Pageable pageable
+    ) {
+        Page<VagaResponseDTO> pagina = service.listarTodas(pageable);
+        return ResponseEntity.ok(pagina);
     }
 
     @GetMapping("/{id}")
@@ -45,8 +49,11 @@ public class VagaController {
     }
 
     @GetMapping("/filtro")
-    public ResponseEntity<List<VagaResponseDTO>> buscarComFiltros(VagaRequestDTO filtros) {
-        List<VagaResponseDTO> resultado = service.listarComFiltros(filtros);
+    public ResponseEntity<Page<VagaResponseDTO>> buscarComFiltros(
+            VagaRequestDTO filtros,
+            @PageableDefault(size = 12) Pageable pageable
+    ) {
+        Page<VagaResponseDTO> resultado = service.listarComFiltros(filtros, pageable);
         return ResponseEntity.ok(resultado);
     }
 }
