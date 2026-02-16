@@ -3,7 +3,7 @@ spring:
     name: WS2
     version: v1.0.0-BETA
   profiles:
-    active: "test"
+    active: "prod"
   jpa:
     open-in-view: false
 

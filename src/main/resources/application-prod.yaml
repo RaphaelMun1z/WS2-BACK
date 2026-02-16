@@ -4,6 +4,23 @@ spring:
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+
+spring-doc:
+  paths-to-match: /**
+  swagger-ui:
+    use-root-path: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
 
 cors:
   originPatterns: http://localhost:8080,http://localhost:8889,http://localhost:80,http://localhost:4200

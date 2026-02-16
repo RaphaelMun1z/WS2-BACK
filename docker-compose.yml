@@ -1,16 +1,49 @@
-#version: '3.4'
-#services:
-#  db:
-#    image: postgres:latest
-#    command: ...
-#    environment:
-#      TZ: America/Sao_Paulo
-#      ...
-#    ports:
-#      - "3308:3306"
-#  backend:
-#    image: ...
-#    ports:
-#      - 80:80
-#    depends_on:
-#      - db
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: postgres_ws2
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: bd_ws2
+      TZ: America/Sao_Paulo
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ws2-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    container_name: backend_ws2
+    build: .
+    image: raphaelmuniz/ws2-api:latest
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_ws2:5432/bd_ws2
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRINGDOC_SWAGGER_UI_USE_ROOT_PATH: "true"
+      TZ: America/Sao_Paulo
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - ws2-network
+
+volumes:
+  postgres_data:
+
+networks:
+  ws2-network:
+    driver: bridge
