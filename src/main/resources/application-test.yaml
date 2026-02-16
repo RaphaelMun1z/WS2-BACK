@@ -1,16 +1,13 @@
 spring:
-  application:
-    name: WS2
-    version: v1.0.0-BETA
-  profiles:
-    active: "test"
   jpa:
-    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/bd_ws2
-    username: postgres
-    password: password
     driver-class-name: org.postgresql.Driver
 
 spring-doc:
@@ -19,7 +16,7 @@ spring-doc:
     use-root-path: true
 
 server:
-  port: ${PORT:8080}
+  port: 8888
   servlet:
     context-path: /api
 

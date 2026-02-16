@@ -1,5 +1,6 @@
 package io.github.raphaelmun1z.controllers;
 
+import io.github.raphaelmun1z.controllers.docs.VagaControllerDoc;
 import io.github.raphaelmun1z.dto.req.VagaRequestDTO;
 import io.github.raphaelmun1z.dto.res.VagaResponseDTO;
 import io.github.raphaelmun1z.services.system.VagaService;
@@ -15,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/vagas")
-public class VagaController {
+public class VagaController implements VagaControllerDoc {
     private final VagaService service;
 
     public VagaController(VagaService service) {
