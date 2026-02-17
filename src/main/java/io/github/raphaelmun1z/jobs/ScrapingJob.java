@@ -30,27 +30,81 @@ public class ScrapingJob {
         }).start();
     }
 
+//    @Scheduled(cron = "0 0 */6 * * *")
+//    public void executarBuscaAutomatica() {
+//        System.out.println("Iniciando scraping...");
+//
+//        List<Vaga> listaTemporaria = new ArrayList<>();
+//
+//        listaTemporaria.addAll(new CathoService().buscarVagas());
+//        listaTemporaria.addAll(new NerdinService().buscarVagas());
+//        listaTemporaria.addAll(new InfojobsService().buscarVagas());
+//        listaTemporaria.addAll(new IndeedService().buscarVagas());
+//        listaTemporaria.addAll(new GlassdoorService().buscarVagas());
+//
+//        listaTemporaria.forEach(vaga -> {
+//            try {
+//                vagaService.salvar(converterParaDto(vaga));
+//            } catch (Exception e) {
+//                System.err.println("Erro ao processar vaga: " + vaga.getCodigoVaga());
+//            }
+//        });
+//
+//        System.out.println("Scraping finalizado! Total processado: " + listaTemporaria.size());
+//    }
+
     @Scheduled(cron = "0 0 */6 * * *")
     public void executarBuscaAutomatica() {
-        System.out.println("Iniciando scraping...");
-
+        System.out.println("=== [START] Iniciando Ciclo de Scraping ===");
         List<Vaga> listaTemporaria = new ArrayList<>();
 
-        listaTemporaria.addAll(new CathoService().buscarVagas());
-        listaTemporaria.addAll(new NerdinService().buscarVagas());
-        listaTemporaria.addAll(new InfojobsService().buscarVagas());
-        listaTemporaria.addAll(new IndeedService().buscarVagas());
-        listaTemporaria.addAll(new GlassdoorService().buscarVagas());
+        executarScrapingPorFonte("Catho", new CathoService(), listaTemporaria);
+        executarScrapingPorFonte("Nerdin", new NerdinService(), listaTemporaria);
+        executarScrapingPorFonte("Infojobs", new InfojobsService(), listaTemporaria);
+        executarScrapingPorFonte("Indeed", new IndeedService(), listaTemporaria);
+        executarScrapingPorFonte("Glassdoor", new GlassdoorService(), listaTemporaria);
 
-        listaTemporaria.forEach(vaga -> {
+        System.out.println("=== [PROCESS] Total de vagas capturadas: " + listaTemporaria.size() + " ===");
+
+        if (listaTemporaria.isEmpty()) {
+            System.out.println("=== [WARN] Nenhuma vaga encontrada em nenhuma fonte. Verifique bloqueios de IP. ===");
+            return;
+        }
+
+        int salvosComSucesso = 0;
+        for (Vaga vaga : listaTemporaria) {
             try {
                 vagaService.salvar(converterParaDto(vaga));
+                salvosComSucesso++;
             } catch (Exception e) {
-                System.err.println("Erro ao processar vaga: " + vaga.getCodigoVaga());
+                System.err.println("Erro ao salvar vaga [" + vaga.getTitulo() + "] da fonte " + vaga.getFonte() + ": " + e.getMessage());
             }
-        });
+        }
 
-        System.out.println("Scraping finalizado! Total processado: " + listaTemporaria.size());
+        System.out.println("=== [END] Scraping finalizado! Salvos no banco: " + salvosComSucesso + "/" + listaTemporaria.size() + " ===");
+    }
+
+    private void executarScrapingPorFonte(String nomeFonte, Object service, List<Vaga> listaGeral) {
+        try {
+            System.out.println("-> Buscando na " + nomeFonte + "...");
+
+            List<Vaga> vagasDaFonte = new ArrayList<>();
+
+            if (service instanceof CathoService s) vagasDaFonte = s.buscarVagas();
+            else if (service instanceof NerdinService s) vagasDaFonte = s.buscarVagas();
+            else if (service instanceof InfojobsService s) vagasDaFonte = s.buscarVagas();
+            else if (service instanceof IndeedService s) vagasDaFonte = s.buscarVagas();
+            else if (service instanceof GlassdoorService s) vagasDaFonte = s.buscarVagas();
+
+            if (vagasDaFonte != null && !vagasDaFonte.isEmpty()) {
+                listaGeral.addAll(vagasDaFonte);
+                System.out.println("   [OK] " + nomeFonte + " retornou " + vagasDaFonte.size() + " vagas.");
+            } else {
+                System.out.println("   [EMPTY] " + nomeFonte + " não retornou vagas.");
+            }
+        } catch (Exception e) {
+            System.err.println("   [ERROR] Falha crítica ao buscar na " + nomeFonte + ": " + e.getMessage());
+        }
     }
 
     private VagaRequestDTO converterParaDto(Vaga vaga) {
