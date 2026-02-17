@@ -21,13 +21,16 @@ public class ScrapingJob {
 
     @PostConstruct
     public void executarAoIniciar() {
-        new Thread(() -> {
+        Thread thread = new Thread(() -> {
             try {
+                Thread.sleep(20000);
                 executarBuscaAutomatica();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
-        }).start();
+        });
+        thread.setName("Thread-Scraping-Manual");
+        thread.start();
     }
 
 //    @Scheduled(cron = "0 0 */6 * * *")
