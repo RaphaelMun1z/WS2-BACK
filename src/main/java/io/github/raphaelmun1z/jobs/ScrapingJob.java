@@ -5,6 +5,7 @@ import io.github.raphaelmun1z.entities.Vaga;
 import io.github.raphaelmun1z.services.scrape.*;
 import io.github.raphaelmun1z.services.system.VagaService;
 import jakarta.annotation.PostConstruct;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Profile("dev")
 public class ScrapingJob {
     private final VagaService vagaService;
 
@@ -32,29 +34,6 @@ public class ScrapingJob {
         thread.setName("Thread-Scraping-Manual");
         thread.start();
     }
-
-//    @Scheduled(cron = "0 0 */6 * * *")
-//    public void executarBuscaAutomatica() {
-//        System.out.println("Iniciando scraping...");
-//
-//        List<Vaga> listaTemporaria = new ArrayList<>();
-//
-//        listaTemporaria.addAll(new CathoService().buscarVagas());
-//        listaTemporaria.addAll(new NerdinService().buscarVagas());
-//        listaTemporaria.addAll(new InfojobsService().buscarVagas());
-//        listaTemporaria.addAll(new IndeedService().buscarVagas());
-//        listaTemporaria.addAll(new GlassdoorService().buscarVagas());
-//
-//        listaTemporaria.forEach(vaga -> {
-//            try {
-//                vagaService.salvar(converterParaDto(vaga));
-//            } catch (Exception e) {
-//                System.err.println("Erro ao processar vaga: " + vaga.getCodigoVaga());
-//            }
-//        });
-//
-//        System.out.println("Scraping finalizado! Total processado: " + listaTemporaria.size());
-//    }
 
     @Scheduled(cron = "0 0 */6 * * *")
     public void executarBuscaAutomatica() {
