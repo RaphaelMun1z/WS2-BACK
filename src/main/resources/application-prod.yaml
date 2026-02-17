@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/bd_ws2
-    username: postgres
-    password: password
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/bd_ws2}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:password}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -18,9 +18,9 @@ spring-doc:
     use-root-path: true
 
 server:
-  port: 8080
+  port: ${PORT:8080}
   servlet:
     context-path: /api
 
 cors:
-  originPatterns: http://localhost:8080,http://localhost:8889,http://localhost:80,http://localhost:4200
+  originPatterns: ${CORS_ORIGIN:https://raphaelmun1z.github.io}

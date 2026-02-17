@@ -22,7 +22,6 @@ services:
 
   app:
     container_name: backend_ws2
-    build: .
     image: raphaelmuniz/ws2-api:latest
     restart: on-failure
     ports:
