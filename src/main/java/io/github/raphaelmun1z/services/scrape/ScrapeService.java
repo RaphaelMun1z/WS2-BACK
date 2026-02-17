@@ -19,16 +19,21 @@ public class ScrapeService {
         if (this.driver == null) {
             FirefoxOptions options = new FirefoxOptions();
 
+            options.addArguments("--headless");
+
+            options.addArguments("--disable-gpu");
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
+
+            options.addPreference("permissions.default.image", 2);
+            options.addPreference("dom.ipc.plugins.enabled.libflashplayer.so", "false");
+
             options.addPreference("general.useragent.override", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0");
-
             options.addPreference("dom.webdriver.enabled", false);
-            options.addPreference("useAutomationExtension", false);
-
-            options.addArguments("--disable-blink-features=AutomationControlled");
 
             this.driver = new FirefoxDriver(options);
 
-            this.driver.manage().window().maximize();
+            this.driver.manage().window().setSize(new org.openqa.selenium.Dimension(1920, 1080));
 
             this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
         }
@@ -38,7 +43,6 @@ public class ScrapeService {
         try {
             JavascriptExecutor js = (JavascriptExecutor) driver;
             js.executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
-            js.executeScript("arguments[0].style.border='4px solid red'; arguments[0].style.backgroundColor='#fffacd';", element);
         } catch (Exception e) {}
     }
 
@@ -47,6 +51,7 @@ public class ScrapeService {
             try {
                 driver.quit();
             } catch (Exception e) {
+                System.err.println("Erro ao fechar driver: " + e.getMessage());
             }
             driver = null;
         }
