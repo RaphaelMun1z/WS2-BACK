@@ -101,7 +101,7 @@ class VagaServiceTest {
             verify(repository).save(vagaCaptor.capture());
 
             Vaga vagaCapturada = vagaCaptor.getValue();
-            assertThat(vagaCapturada.getFonte()).isEqualTo(dto.fonte());
+            assertThat(vagaCapturada.getFonte()).isEqualTo("Gupy");
             assertThat(vagaCapturada.getCodigoVaga()).isEqualTo(dto.codigoVaga());
             assertThat(vagaCapturada.getTitulo()).isEqualTo(dto.titulo());
             assertThat(vagaCapturada.getEmpresa()).isEqualTo(dto.empresa());
