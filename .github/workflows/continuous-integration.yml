@@ -4,6 +4,7 @@ on:
   push:
     branches: 
       - main
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,11 +24,10 @@ jobs:
         java-version: '21'
         distribution: 'adopt'
         cache: maven
-        
-    - name: Build and Run Tests
+
+    - name: Build Application JAR
       working-directory: .
-      run: |
-        mvn clean verify -Dspring.profiles.active=dev
+      run: mvn clean package -Dspring.profiles.active=prod
 
     - name: Docker Compose Build
       working-directory: .
@@ -35,7 +35,7 @@ jobs:
 
     - name: Push to Docker Hub Container Registry
       run: |
-        docker tag ${{ secrets.DOCKER_USERNAME }}/ws2-api:latest ${{ secrets.DOCKER_USERNAME }}/ws2-api:${{ github.run_id }}
-
-        docker push ${{ secrets.DOCKER_USERNAME }}/ws2-api:${{ github.run_id }}
-        docker push ${{ secrets.DOCKER_USERNAME }}/ws2-api:latest
+        docker tag ${{ secrets.DOCKER_USERNAME }}/spring-ws2:latest ${{ secrets.DOCKER_USERNAME }}/spring-ws2:${{ github.run_id }}
+        
+        docker push ${{ secrets.DOCKER_USERNAME }}/spring-ws2:${{ github.run_id }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/spring-ws2:latest
