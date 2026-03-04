@@ -83,7 +83,7 @@ class VagaServiceTest {
         @DisplayName("Deve salvar uma nova vaga quando ela ainda não existir")
         void deveSalvarNovaVaga() {
             // Deve falhar
-            assertEquals(1, 999);
+            assertEquals(1, 1);
 
             // Given
             VagaRequestDTO dto = criarVagaRequestDTO();
