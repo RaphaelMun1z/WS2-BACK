@@ -27,7 +27,7 @@ jobs:
     - name: Build and Run Tests
       working-directory: .
       run: |
-        mvn clean verify -Dspring.profiles.active=dev
+        mvn clean verify -Dspring.profiles.active=prod
 
     - name: Docker Compose Build
       working-directory: .
