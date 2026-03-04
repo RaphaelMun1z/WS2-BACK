@@ -22,12 +22,12 @@ services:
 
   app:
     container_name: backend_ws2
-    image: raphaelmuniz/ws2-api:latest
+    image: raphaelmuniz/spring-ws2:latest
     restart: on-failure
     ports:
       - "8080:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: prod
+      SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_ws2:5432/bd_ws2
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: password

@@ -23,4 +23,4 @@ server:
     context-path: /api
 
 cors:
-  originPatterns: http://localhost:4200
+  originPatterns: "*"

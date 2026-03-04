@@ -23,4 +23,4 @@ server:
     context-path: /api
 
 cors:
-  originPatterns: ${CORS_ORIGIN:https://raphaelmun1z.github.io}
+  originPatterns: ${CORS_ORIGIN:http://localhost:80,http://localhost:4200,https://raphaelmun1z.github.io}

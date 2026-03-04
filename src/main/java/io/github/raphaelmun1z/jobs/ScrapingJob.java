@@ -23,9 +23,10 @@ public class ScrapingJob {
 
     @PostConstruct
     public void executarAoIniciar() {
+        System.out.println(">>> SCRAPING JOB INICIALIZADO <<<");
         Thread thread = new Thread(() -> {
             try {
-                Thread.sleep(20000);
+                Thread.sleep(2000);
                 executarBuscaAutomatica();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
