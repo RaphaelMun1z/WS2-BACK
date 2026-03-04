@@ -24,9 +24,10 @@ jobs:
         distribution: 'adopt'
         cache: maven
         
-    - name: Build Application JAR
+    - name: Build and Run Tests
       working-directory: .
-      run: mvn clean package
+      run: |
+        mvn clean verify -Dspring.profiles.active=dev
 
     - name: Docker Compose Build
       working-directory: .
