@@ -16,7 +16,7 @@ public class SwaggerIntegrationTest extends AbstractIntegrationTest {
     @DisplayName("JUnit test for Should Display Swagger UI Page")
     void testShouldDisplaySwaggerUiPage() {
         var content = given()
-                .basePath("/api/swagger-ui/index.html")
+                .basePath("/swagger-ui/index.html")
                 .port(TestConfig.SERVER_PORT)
                 .when()
                     .get()
