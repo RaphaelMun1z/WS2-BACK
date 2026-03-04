@@ -22,6 +22,7 @@ services:
 
   app:
     container_name: backend_ws2
+    build: .
     image: raphaelmuniz/spring-ws2:latest
     restart: on-failure
     ports:
