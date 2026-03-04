@@ -35,7 +35,7 @@ jobs:
 
     - name: Push to Docker Hub Container Registry
       run: |
-        docker tag ${{ secrets.DOCKER_USERNAME }}/ws2-api:latest ${{ secrets.DOCKER_USERNAME }}/ws2-api:${{ github.run_id }}
+        docker tag ${{ secrets.DOCKER_USERNAME }}/spring-ws2:latest ${{ secrets.DOCKER_USERNAME }}/spring-ws2:${{ github.run_id }}
 
-        docker push ${{ secrets.DOCKER_USERNAME }}/ws2-api:${{ github.run_id }}
-        docker push ${{ secrets.DOCKER_USERNAME }}/ws2-api:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/spring-ws2:${{ github.run_id }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/spring-ws2:latest
