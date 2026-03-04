@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -81,6 +82,9 @@ class VagaServiceTest {
         @Test
         @DisplayName("Deve salvar uma nova vaga quando ela ainda não existir")
         void deveSalvarNovaVaga() {
+            // Deve falhar
+            assertEquals(1, 2);
+
             // Given
             VagaRequestDTO dto = criarVagaRequestDTO();
             Vaga vagaSalvaSimulada = criarVagaEntidade();
